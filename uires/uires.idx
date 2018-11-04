@@ -45,5 +45,6 @@
 	</translator>
 	<smenu>
 		<file name="menu_layoutfile" path="smenu\menu_layoutfile.xml" />
+		<file name="menu_recent" path="smenu\menu_recent.xml" />
 	</smenu>
 </resource>

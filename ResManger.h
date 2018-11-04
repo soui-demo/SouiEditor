@@ -66,8 +66,10 @@ public:
 	void LoadColorFile();
 	void LoadStyleFile();
 	void LoadObjattrFile();
+	void LoadSkinNode(pugi::xml_node xmlNode);
 
 	SkinItem GetSkinByImg(SStringT srcimg);
+	SkinItem GetSkinByName(SStringT skinname);
 
 	SStringA GetSkinAutos(SStringT prev);
 
@@ -86,6 +88,7 @@ public:
 
 protected:
 	void LoadResFileEx(SStringT & filepath, pugi::xml_document &xmlDoc, SStringT tagname);
+
 
 public:
 	SStringT m_strProPath;			// 加载资源文件的根目录

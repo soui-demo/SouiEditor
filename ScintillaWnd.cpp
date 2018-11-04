@@ -138,11 +138,10 @@ BOOL CScintillaWnd::OpenFile(LPCTSTR lpFileName)
 	SendEditor(SCI_ADDTEXT, str.GetLength(),
 		reinterpret_cast<LPARAM>((LPCSTR)str));
 
-	SendEditor(SCI_SETUNDOCOLLECTION, 1, 0);
-	SendEditor(EM_EMPTYUNDOBUFFER, 0, 0);
 	SendEditor(SCI_SETSAVEPOINT, 0, 0);
 	SendEditor(SCI_GOTOPOS, 0, 0);
 	SendEditor(SCI_CHOOSECARETX, 0, 0);
+	ResetRedo();
 	::SetFocus(m_hWnd);
 	UpdateLineNumberWidth();
 
@@ -161,6 +160,12 @@ void CScintillaWnd::DoSave()
 
 	if (SaveFile(m_strFileName))
 		SetDirty(false);
+}
+
+void CScintillaWnd::ResetRedo()
+{
+	SendEditor(SCI_EMPTYUNDOBUFFER, 0, 0);
+	SendEditor(SCI_SETUNDOCOLLECTION, 1, 0);
 }
 
 void CScintillaWnd::SetDirty(bool bDirty)

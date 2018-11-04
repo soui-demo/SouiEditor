@@ -244,6 +244,7 @@ BOOL CMainDlg::OnInitDialog(HWND hWnd, LPARAM lParam)
 	m_treePro = FindChildByName2<STreeCtrl>(L"workspace_tree");
 	m_lbWorkSpaceXml = FindChildByName2<SListBox>(L"workspace_xmlfile_lb");
 	m_staticAppTitle = FindChildByName2<SStatic>(L"apptitle");
+	m_btn_recentFile = FindChildByName2<SButton>(L"toolbar_btn_recent");
 
 	m_pLayoutContainer = FindChildByName2<SWindow>(L"uidesigner_wnd_layout");
 	m_treeXmlStruct = FindChildByName2<STreeCtrl>(L"uidesigner_wnd_xmltree");
@@ -267,6 +268,8 @@ BOOL CMainDlg::OnInitDialog(HWND hWnd, LPARAM lParam)
 	m_mcAllSkin = FindChildByName2<SMCListView>("mclv_skin");
 	m_lvAllString = FindChildByName2<SListView>("lv_allString");
 	m_lbAllStyle = FindChildByName2<SListBox>("lb_allStyle");
+
+	m_RecentFileMenu.LoadMenu(UIRES.smenu.menu_recent);
 	//======================================================================
 	m_pDesignerView = new SDesignerView((SHostDialog*)this, m_pLayoutContainer, m_treeXmlStruct);
 	m_RealWndXmlFile->GetRealHwnd();	//触发建立真窗口
@@ -281,8 +284,6 @@ BOOL CMainDlg::OnInitDialog(HWND hWnd, LPARAM lParam)
 
 	if (m_pDesignerView->m_bXmlResLoadOK)
 	{
-
-		
 		g_SysDataMgr.LoadSysData(g_CurDir + L"Config");
 		BOOL result = SDesignerView::LoadConfig(xmlDocCtrl,_T("Config\\ctrl.xml"));
 		if (!result)
@@ -323,7 +324,67 @@ BOOL CMainDlg::OnInitDialog(HWND hWnd, LPARAM lParam)
 	if (MainWnd)
 		RegisterDragDrop(MainWnd->GetSwnd(), new CFileDropTarget(MainWnd));
 
+	LoadAppCfg();
+
+
 	return 0;
+}
+
+void CMainDlg::LoadAppCfg()
+{
+	pugi::xml_document xmldoc;
+	pugi::xml_parse_result result = xmldoc.load_file(g_CurDir + L"sEditor.cfg");
+	if (result)
+	{
+		m_vecRecentFile.clear();
+		pugi::xml_node rootNode = xmldoc.child(L"root");
+		if (!rootNode)
+			return;
+
+		pugi::xml_node recentNode = rootNode.child(L"recent_file");
+		pugi::xml_node recentItem = recentNode.first_child();
+		while (recentItem)
+		{
+			SStringT filepath = recentItem.attribute(L"path").as_string();
+			m_vecRecentFile.push_back(filepath);
+
+			recentItem = recentItem.next_sibling();
+		}
+	}
+
+	do 
+	{
+		;
+	} while (m_RecentFileMenu.DeleteMenu(0, MF_BYCOMMAND | MF_BYPOSITION));
+	
+	UINT MenuId = MenuId_Start;
+	for (auto &recentitem : m_vecRecentFile)
+	{
+		m_RecentFileMenu.InsertMenu(0, MF_BYCOMMAND|MF_BYPOSITION, MenuId++, recentitem + L"  ");
+	}
+}
+
+void CMainDlg::SaveAppCfg()
+{
+	pugi::xml_document xmlDoc;
+	pugi::xml_node nodeRoot = xmlDoc.append_child(L"root");
+	// 声明
+	pugi::xml_node pre = xmlDoc.prepend_child(pugi::node_declaration);
+	pre.append_attribute(L"version") = "1.0";
+	pre.append_attribute(L"encoding") = "utf-8";
+
+	// 注释节点1
+	pugi::xml_node nodeCommentStudents = nodeRoot.append_child(pugi::node_comment);
+	nodeCommentStudents.set_value(L"SouiEditor Config");
+	// 普通节点1
+	pugi::xml_node nodeRecents = nodeRoot.append_child(L"recent_file");
+	for (auto &recentitem : m_vecRecentFile)
+	{
+		pugi::xml_node nodeRecent = nodeRecents.append_child(L"item");
+		nodeRecent.append_attribute(L"path").set_value(recentitem);
+	}
+
+	xmlDoc.save_file(g_CurDir + L"sEditor.cfg");
 }
 
 void CMainDlg::OnLanguageBtnCN()
@@ -387,9 +448,9 @@ void CMainDlg::OnLanguage(int nID)
 		CAutoRefPtr<ITranslator> lang;
 		pTransMgr->CreateTranslator(&lang);
 		lang->Load(&xmlLang.child(L"language"), 1);//1=LD_XML
-		wchar_t szName[64];
-		lang->GetName(szName);
-		pTransMgr->SetLanguage(szName);
+		TCHAR lngName[TR_MAX_NAME_LEN] = {0};
+		lang->GetName(lngName);
+		pTransMgr->SetLanguage(lngName);
 		pTransMgr->InstallTranslator(lang);
 		SDispatchMessage(UM_SETLANGUAGE,0,0);
 	}
@@ -473,6 +534,22 @@ bool CMainDlg::Desiner_TabSelChanged(EventTabSelChanged *evt_sel)
 	return false;
 }
 
+void CMainDlg::OnCommand(UINT uNotifyCode, int nID, HWND wndCtl)
+{
+	if (uNotifyCode == 0)
+	{
+		if (nID >= MenuId_Start && nID <= (MenuId_Start + m_vecRecentFile.size()))
+		{
+			if (m_bIsOpen)
+			{
+				CDebug::Debug(_T("请先关闭当前工程"));
+				return;
+			}
+			OpenProject(m_vecRecentFile[nID - MenuId_Start]);
+		}
+	}
+}
+
 void CMainDlg::DelayReloadLayout(STabCtrl* pTabHost)
 {
 	pTabHost->SetAttribute(_T("animateSteps"), _T("0"));
@@ -514,6 +591,8 @@ void CMainDlg::OnBtnClose()
 		return;
 
 	CloseProject();
+
+	LoadAppCfg();
 }
 
 void CMainDlg::OnBtnReload()
@@ -596,6 +675,14 @@ void CMainDlg::OpenProject(SStringT strFileName)
 	RefreshWorkSpaceAllList();
 
 	m_bIsOpen = TRUE;
+
+	if (std::find(m_vecRecentFile.begin(), m_vecRecentFile.end(), strFileName) == m_vecRecentFile.end())
+	{
+		m_vecRecentFile.push_back(strFileName);
+		if (m_vecRecentFile.size() > 10)
+			m_vecRecentFile.erase(m_vecRecentFile.begin());
+		SaveAppCfg();
+	}
 }
 
 void CMainDlg::ReloadWorkspaceUIRes()
@@ -727,6 +814,15 @@ void CMainDlg::OnbtnPreview()
 			m_pDesignerView->unPreview();
 		}
 	}
+}
+
+void CMainDlg::OnBtnRecentFile()
+{
+	CRect rect = m_btn_recentFile->GetWindowRect();
+	ClientToScreen(&rect);
+
+	//使用自绘菜单
+	m_RecentFileMenu.TrackPopupMenu(0, rect.left, rect.bottom, m_hWnd);
 }
 
 void CMainDlg::LoadWorkSpace()
@@ -1005,7 +1101,6 @@ void CMainDlg::RefreshStringList()
 		pLvAdapter->Release();
 	}
 }
-
 
 void CMainDlg::RefreshStyleList()
 {

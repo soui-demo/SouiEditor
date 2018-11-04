@@ -52,8 +52,10 @@ void ResManger::ReleaseUIRes()
 
 void ResManger::SaveRes()
 {
-	m_xmlDocUiRes.save_file(m_strUIResFile);
-	m_xmlDocSkin.save_file(m_strSkinFile);
+	if (!m_strUIResFile.Trim().IsEmpty())
+		m_xmlDocUiRes.save_file(m_strUIResFile);
+	if (!m_strSkinFile.Trim().IsEmpty())
+		m_xmlDocSkin.save_file(m_strSkinFile);
 // 	m_xmlDocString.save_file(m_strStringFile);
 // 	m_xmlDocColor.save_file(m_strColorFile);
 // 	m_xmlDocStyle.save_file(m_strStyleFile);
@@ -261,11 +263,9 @@ void ResManger::LoadResFileEx(SStringT& filepath, pugi::xml_document& xmlDoc, SS
 	}
 }
 
-void ResManger::LoadSkinFile()
+void ResManger::LoadSkinNode(pugi::xml_node xmlNode)
 {
-	LoadResFileEx(m_strSkinFile, m_xmlDocSkin, _T("skin"));
 	m_mapSkins.RemoveAll();
-	pugi::xml_node xmlNode = GetResFirstNode(_T("skin"));
 	while (xmlNode)
 	{
 		if (xmlNode.type() != pugi::node_element)
@@ -282,6 +282,13 @@ void ResManger::LoadSkinFile()
 		m_mapSkins[s2] = SkinItem(s1, s2, s3, xmlNode);
 		xmlNode = xmlNode.next_sibling();
 	}
+}
+
+void ResManger::LoadSkinFile()
+{
+	LoadResFileEx(m_strSkinFile, m_xmlDocSkin, _T("skin"));
+	pugi::xml_node xmlNode = GetResFirstNode(_T("skin"));
+	LoadSkinNode(xmlNode);
 }
 
 void ResManger::LoadStringFile()
@@ -353,6 +360,23 @@ void ResManger::LoadStyleFile()
 void ResManger::LoadObjattrFile()
 {
 	LoadResFileEx(m_strObjattrFile, m_xmlDocObjattr, _T("objattr"));
+}
+
+ResManger::SkinItem ResManger::GetSkinByName(SStringT skinname)
+{
+	SPOSITION pos = m_mapSkins.GetStartPosition();
+	while (pos)
+	{
+		const SMap<SStringT, SkinItem>::CPair* item = m_mapSkins.GetAt(pos);
+		if (skinname.CompareNoCase(item->m_value.name) == 0)
+		{
+			return item->m_value;
+		}
+
+		m_mapSkins.GetNext(pos);
+	}
+
+	return SkinItem();
 }
 
 ResManger::SkinItem ResManger::GetSkinByImg(SStringT srcimg)

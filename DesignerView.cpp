@@ -389,6 +389,8 @@ BOOL SDesignerView::LoadLayout(SStringT strFileName)
 	m_treeXmlStruct->RemoveAllItems();
 	InitXMLStruct(m_CurrentLayoutNode, STVI_ROOT);
 
+	m_pScintillaWnd->ResetRedo();
+
 	//恢复uidef为编辑器的uidef
 	UseEditorUIDef(true);
 	return TRUE;
@@ -935,30 +937,33 @@ void SDesignerView::UpdatePosToXmlNode(SUIWindow *pRealWnd, SMoveWnd* pMoveWnd)
 	else
 	{
 		SLinearLayoutParam *pSLinearLayoutParam = pRealWnd->GetLayoutParamT<SLinearLayoutParam>();
-		if (attrSize)
+		if (pSLinearLayoutParam)
 		{
-			strTemp.Format(_T("%d%s, %d%s"),
-				(int)pSLinearLayoutParam->GetSpecifiedSize(Horz).fSize,
-				UnitToStr(pSLinearLayoutParam->GetSpecifiedSize(Horz).unit),
-				(int)pSLinearLayoutParam->GetSpecifiedSize(Vert).fSize,
-				UnitToStr(pSLinearLayoutParam->GetSpecifiedSize(Vert).unit));
-			attrSize.set_value(strTemp);
-		}
+			if (attrSize)
+			{
+				strTemp.Format(_T("%d%s, %d%s"),
+					(int)pSLinearLayoutParam->GetSpecifiedSize(Horz).fSize,
+					UnitToStr(pSLinearLayoutParam->GetSpecifiedSize(Horz).unit),
+					(int)pSLinearLayoutParam->GetSpecifiedSize(Vert).fSize,
+					UnitToStr(pSLinearLayoutParam->GetSpecifiedSize(Vert).unit));
+				attrSize.set_value(strTemp);
+			}
 
-		if (attrWidth)
-		{
-			strTemp.Format(_T("%d%s"),
-				(int)pSLinearLayoutParam->GetSpecifiedSize(Horz).fSize,
-				UnitToStr(pSLinearLayoutParam->GetSpecifiedSize(Horz).unit));
-			attrWidth.set_value(strTemp);
-		}
-		if (attrHeight)
-		{
-			strTemp.Format(_T("%d"),
-				(int)pSLinearLayoutParam->GetSpecifiedSize(Vert).fSize,
-				UnitToStr(pSLinearLayoutParam->GetSpecifiedSize(Vert).unit));
-			attrHeight.set_value(strTemp);
-		}
+			if (attrWidth)
+			{
+				strTemp.Format(_T("%d%s"),
+					(int)pSLinearLayoutParam->GetSpecifiedSize(Horz).fSize,
+					UnitToStr(pSLinearLayoutParam->GetSpecifiedSize(Horz).unit));
+				attrWidth.set_value(strTemp);
+			}
+			if (attrHeight)
+			{
+				strTemp.Format(_T("%d"),
+					(int)pSLinearLayoutParam->GetSpecifiedSize(Vert).fSize,
+					UnitToStr(pSLinearLayoutParam->GetSpecifiedSize(Vert).unit));
+				attrHeight.set_value(strTemp);
+			}
+		}	
 	}
 
 	SetCurrentCtrl(xmlNode, pMoveWnd);
@@ -1872,11 +1877,15 @@ void SDesignerView::LocateControlXML()
 
 	SStringA str;
 	str = S_CW2A(writer_buf, CP_UTF8);
+	pSciWnd->SendMessage(SCI_SETUNDOCOLLECTION, 0, 0);
+
 	pSciWnd->SendMessage(SCI_SETREADONLY, 0, 0);
 	pSciWnd->SendMessage(SCI_CLEARALL, 0, 0);
 	pSciWnd->SendMessage(SCI_ADDTEXT, str.GetLength(),
 		reinterpret_cast<LPARAM>((LPCSTR)str));
 	pSciWnd->SetDirty(false);
+
+	pSciWnd->SendMessage(SCI_SETUNDOCOLLECTION, 1, 0);
 	//pSciWnd->SetFocus();		//在响应属性修改时, 这将引发异常
 	RestoreEditorCaretPos();
 }

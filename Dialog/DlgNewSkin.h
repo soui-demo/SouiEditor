@@ -51,6 +51,7 @@ namespace SOUI
 	public:
 		SStringT m_strSkinName;	
 		SListBox *m_lbMain;
+		bool	 m_noResSelected;
 	};
 
 }

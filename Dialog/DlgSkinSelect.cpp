@@ -152,6 +152,7 @@ namespace SOUI
 	void SDlgSkinSelect::InitResType()
 	{
 		m_lbResType->AddString(_T("内置皮肤"));
+		m_lbResType->AddString(_T("自定义皮肤"));
 		m_lbResType->AddString(_T("所有图片"));
 		m_lbResType->AddString(_T("所有颜色"));
 
@@ -222,6 +223,19 @@ namespace SOUI
 			}
 		}
 		else if (pEvt->nNewSel == 1)
+		{	// 所有自定义皮肤
+			m_lbRes->DeleteAll();
+
+			pugi::xml_node skinNode;
+			skinNode = m_pResFileManger->GetResFirstNode(_T("skin"));
+			while (skinNode)
+			{
+				SStringT SkinName = skinNode.attribute(_T("name")).as_string();
+				m_lbRes->AddString(SkinName, -1, (LPARAM)0);
+				skinNode = skinNode.next_sibling();
+			}
+		}
+		else if (pEvt->nNewSel == 2)
 		{	// 所有图片资源
 			m_lbRes->DeleteAll();
 
@@ -236,7 +250,7 @@ namespace SOUI
 				m_pResFileManger->m_mapResFile.GetNext(pos);
 			}
 		}
-		else if (pEvt->nNewSel == 2)
+		else if (pEvt->nNewSel == 3)
 		{	// 所有颜色
 			m_lbRes->DeleteAll();
 
@@ -300,17 +314,18 @@ namespace SOUI
 		}
 		SStringT *s = (SStringT *)listbox->GetItemData(pEvt->nNewSel);
 
-		SStringT strTemp(*s);
+		SStringT strTemp;
+		if (s) strTemp = *s;
 
 		if (m_lbResType->GetCurSel() == 0)
 		{
 			m_lbSkin->AddString(strTemp + _T(":  ") + GetLBCurSelText(m_lbRes));
-
-			ShowImage();
+			SStringT strImgname = GetLBCurSelText(m_lbRes);
+			ShowImage(strImgname);
 			m_lbRes->SetFocus();
 			return true;
 		}
-		if (m_lbResType->GetCurSel() == 2)
+		else if (m_lbResType->GetCurSel() == 3)
 		{
 			SStringT strColor = GetLBCurSelText(m_lbRes);
 			strColor = ResManger::RemoveResTypename(strColor);
@@ -323,15 +338,28 @@ namespace SOUI
 		if (strTemp.Find(_T(":")) == -1)
 			strTemp = strResName + _T(":") + strTemp;
 
-		ResManger::SkinItem matchSkin = m_pResFileManger->GetSkinByImg(strTemp);
+		ResManger::SkinItem matchSkin;
+		SStringT strImgname;
+		if (m_lbResType->GetCurSel() == 1)
+		{
+			strResName = listbox->GetText(pEvt->nNewSel);
+			matchSkin = m_pResFileManger->GetSkinByName(strResName);
+		}
+		else
+			matchSkin = m_pResFileManger->GetSkinByImg(strTemp);
+
 		if (!matchSkin.name.IsEmpty())
 		{
 			SStringT s2, s3;
 			s2 = matchSkin.class_name;
 			s3 = matchSkin.name;
+			strImgname = matchSkin.src;
+			strImgname.MakeLower();
+			SMap<SStringT, SStringT>::CPair * item = m_pResFileManger->m_mapResFile.Lookup(strImgname);
+			if (item)
+				strImgname = item->m_value;
 
 			SStringT *strData = new SStringT(matchSkin.src);
-
 			m_lbSkin->AddString(s2 + _T(":  ") + s3, -1, (LPARAM)strData);
 		}
 		
@@ -344,8 +372,7 @@ namespace SOUI
 			m_lbSkin->FireEvent(evt);
 		}
 		m_lbRes->SetFocus();
-
-		ShowImage();
+		ShowImage(strImgname);
 		return true;
 	}
 
@@ -520,7 +547,7 @@ namespace SOUI
 		}
 
 		SStringT strResType = GetLBCurSelText(m_lbResType);
-		if (m_lbResType->GetCurSel() <= 2)
+		if (m_lbResType->GetCurSel() <= 3)
 		{
 			CDebug::Debug(_T("不能选择") + strResType + _T("类型"));
 			return;
@@ -627,7 +654,7 @@ namespace SOUI
 			return;
 		}
 
-		if (m_lbResType->GetCurSel() <= 2)
+		if (m_lbResType->GetCurSel() <= 3)
 		{
 			CDebug::Debug(_T("不能选择") + strResType + _T("类型"));
 			return;
@@ -675,13 +702,14 @@ namespace SOUI
 			return;
 		}
 
-		if (m_lbRes->GetCurSel() < 0)
-		{
-			CDebug::Debug(_T("请先选择资源"));
-			return;
-		}
+		bool bNeedResSkin = true;
 
-		if (m_lbSkin->GetCount() > 0)
+ 		if (m_lbRes->GetCurSel() < 0)
+ 		{
+			bNeedResSkin = false;
+ 		}
+
+		if (!bNeedResSkin && m_lbSkin->GetCount() > 0)
 		{
 			CDebug::Debug(_T("一个资源只能对应一个皮肤"));
 			return;
@@ -689,6 +717,7 @@ namespace SOUI
 
 		SStringT strSkinTypeName;
 		SDlgNewSkin DlgNewSkin(_T("layout:UIDESIGNER_XML_NEW_SKIN"));
+		DlgNewSkin.m_noResSelected = !bNeedResSkin;
 		if (IDOK == DlgNewSkin.DoModal(m_hWnd))
 		{
 			strSkinTypeName = DlgNewSkin.m_strSkinName;
@@ -698,27 +727,38 @@ namespace SOUI
 			return;
 		}
 
-		pugi::xml_node xmlNode;
-		xmlNode = m_pResFileManger->GetResFirstNode(_T("skin"));
+		pugi::xml_node skinNode, xmlNode;
+		skinNode = m_pResFileManger->GetResFirstNode(_T("skin"));
 
+		SStringT skinName;
 		SStringT strSrc;
-		strSrc = GetLBCurSelText(m_lbResType) + _T(":");
-		SStringT *s = (SStringT *)m_lbRes->GetItemData(m_lbRes->GetCurSel());
-		strSrc = strSrc + *s;
-		SStringT skinName = _T("skin_");
-		skinName += *s;
-		//判断当前资源已被其他皮肤引用
-		pugi::xml_node NodeTemp = xmlNode.find_child_by_attribute(_T("src"), strSrc);
-		if (NodeTemp)
+		if (bNeedResSkin)
 		{
-			CDebug::Debug(_T("当前资源已被其他皮肤引用:") + CDebug::Debug1(NodeTemp));
-			return;
+			strSrc = GetLBCurSelText(m_lbResType) + _T(":");
+			SStringT *s = (SStringT *)m_lbRes->GetItemData(m_lbRes->GetCurSel());
+			strSrc = strSrc + *s;
+			if (!s->StartsWith(L"skin_", true))
+				skinName = _T("skin_");
+			skinName += *s;
+			//判断当前资源已被其他皮肤引用
+			pugi::xml_node NodeTemp = skinNode.find_child_by_attribute(_T("src"), strSrc);
+			if (NodeTemp)
+			{
+				CDebug::Debug(_T("当前资源已被其他皮肤引用:") + CDebug::Debug1(NodeTemp));
+				return;
+			}
+		}else
+		{
+			skinName = _T("skin_");
+			skinName += strSkinTypeName + SStringT(_T("")).Format(_T("%d"), rand());
 		}
 
-		xmlNode = xmlNode.parent().append_child(strSkinTypeName);
+		xmlNode = skinNode.parent().append_child(strSkinTypeName);
 
 		xmlNode.append_attribute(_T("name")).set_value(skinName);
 		xmlNode.append_attribute(_T("src")).set_value(strSrc);
+
+		m_pResFileManger->LoadSkinNode(skinNode);
 
 		SStringT *strData = new SStringT(strSrc);
 		int n = m_lbSkin->AddString(strSkinTypeName + _T(": ") + skinName, -1, (LPARAM)strData);
@@ -753,8 +793,9 @@ namespace SOUI
 			strList.GetAt(i).TrimBlank();
 		}
 
-		pugi::xml_node xmlNode;
-		xmlNode = m_pResFileManger->GetResFirstNode(_T("skin"));
+		pugi::xml_node skinNode, xmlNode;
+		skinNode = m_pResFileManger->GetResFirstNode(_T("skin"));
+		xmlNode = skinNode;
 
 		while (xmlNode)
 		{
@@ -772,6 +813,7 @@ namespace SOUI
 					if (strList[1].CompareNoCase(attr.value()) == 0)
 					{
 						xmlNode.parent().remove_child(xmlNode);
+						m_pResFileManger->LoadSkinNode(skinNode);
 						SelectLBItem(m_lbRes, m_lbRes->GetCurSel());
 						break;
 					}
@@ -780,6 +822,7 @@ namespace SOUI
 
 			xmlNode = xmlNode.next_sibling();
 		}
+
 	}
 
 	void SDlgSkinSelect::DestroyGrid()
@@ -1056,9 +1099,8 @@ namespace SOUI
 	}
 
 
-	void SDlgSkinSelect::ShowImage()
+	void SDlgSkinSelect::ShowImage(SStringT strImgname)
 	{
-		SStringT strImgname = GetLBCurSelText(m_lbRes);
 		if (m_lbResType->GetCurSel() == 0)
 		{
 			SMap<SStringT, SStringT>::CPair *p = m_mapSysSkin.Lookup(strImgname);

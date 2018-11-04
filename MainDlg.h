@@ -13,11 +13,15 @@
 #include "SImageBtnEx.h"
 #include "SListBoxDrop.h"
 #include "ResManger.h"
+#include <helper/SMenu.h>
+#include <vector>
 
 
 extern SStringT g_CurDir;
 
 #define WM_MSG_SHOWBOX (WM_USER+100)
+#define MenuId_Start  20000
+
 
 class CMainDlg : public SHostWnd
 {
@@ -38,6 +42,10 @@ public:
 	int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	BOOL OnInitDialog(HWND wndFocus, LPARAM lInitParam);
 
+	void LoadAppCfg();
+
+	void SaveAppCfg();
+
 	void OpenProject(SStringT strFileName);
 	void ReloadWorkspaceUIRes();
 	void CloseProject();
@@ -56,6 +64,7 @@ public:
 	void OnBtnZYGL();
 	void OnBtnYSGL();
 	void OnBtnAbout();
+	void OnBtnRecentFile();
 
 	// 直接修改XML文件后加载工程
 	void LoadWorkSpace();
@@ -91,6 +100,8 @@ protected:
 
 	bool Desiner_TabSelChanged(EventTabSelChanged * evt_sel);
 
+	void OnCommand(UINT uNotifyCode, int nID, HWND wndCtl);
+
 	//soui消息
 	EVENT_MAP_BEGIN()
 		EVENT_NAME_COMMAND(L"btn_close", OnClose)
@@ -112,6 +123,7 @@ protected:
 		EVENT_NAME_COMMAND(L"toolbar_btn_YSGL", OnBtnYSGL)
 		EVENT_NAME_COMMAND(L"toolbar_btn_YL", OnbtnPreview)
 		EVENT_NAME_COMMAND(L"toolbar_btn_about", OnBtnAbout)
+		EVENT_NAME_COMMAND(L"toolbar_btn_recent", OnBtnRecentFile)
 
 		EVENT_NAME_COMMAND(L"uidesigner_wnd_layout", OnBtnWndLayout)
 		
@@ -119,7 +131,7 @@ protected:
 
 	EVENT_MAP_END()
 
-		//HostWnd真实窗口消息处理
+	//HostWnd真实窗口消息处理
 	BEGIN_MSG_MAP_EX(CMainDlg)
 		MESSAGE_HANDLER(WM_MSG_SHOWBOX, OnShowMsgBox)
 		MSG_WM_CREATE(OnCreate)
@@ -128,16 +140,21 @@ protected:
 		MSG_WM_SIZE(OnSize)
 		MSG_WM_TIMER(OnTimer)
 		MSG_WM_SHOWWINDOW(OnShowWindow)
+		MSG_WM_COMMAND(OnCommand)
 		CHAIN_MSG_MAP(SHostWnd)
 		REFLECT_NOTIFICATIONS_EX()
 	END_MSG_MAP()
 
 
 private:
-	BOOL			m_bLayoutInited;
+	BOOL					m_bLayoutInited;
+	std::vector<SStringT>	m_vecRecentFile;
 
 public:
-	SButton* btn_new;
+	SMenuEx			m_RecentFileMenu;
+	SButton*		btn_new;
+	SButton*		m_btn_recentFile;
+
 	STreeCtrl * m_treePro;			//工程Layout列表
 	SListBox* m_lbWorkSpaceXml;		//工程中的XML文件列表
 

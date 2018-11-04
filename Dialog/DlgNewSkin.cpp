@@ -9,7 +9,7 @@ namespace SOUI
 
 	SDlgNewSkin::SDlgNewSkin(LPCTSTR pszXmlName):SHostDialog(pszXmlName)
 	{
-
+		m_noResSelected = true;
 	}
 
 	//TODO:消息映射
@@ -49,7 +49,16 @@ namespace SOUI
 		pugi::xml_node Node = doc.child(_T("root")).first_child();
 		while (Node)
 		{
-			m_lbMain->AddString(Node.name());
+			int needRes = Node.attribute(_T("needres")).as_uint();
+			if (m_noResSelected)
+			{
+				if (!needRes)
+					m_lbMain->AddString(Node.name());
+			}else
+			{
+				if (needRes)
+					m_lbMain->AddString(Node.name());
+			}
 			Node = Node.next_sibling();
 		}
 

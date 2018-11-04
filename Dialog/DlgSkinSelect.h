@@ -94,7 +94,7 @@ namespace SOUI
 		 void SelectLBItem(SListBox * lb, int nIndex);
          bool OnReNotify(EventArgs *pEvt);
 		 void GoToSkin();
-		 void ShowImage();
+		 void ShowImage(SStringT strImgname);
 
 		 bool ChekSkin(SStringT strName, SStringT strScale);
 

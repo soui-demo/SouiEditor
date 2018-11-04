@@ -217,7 +217,6 @@
 						<text name="txt_index" pos="|0,|0" offset="-0.5,-0.5" font="adding:10" colorText="#ff000088">10</text>
 					</window>
 					<window name="col2" clipClient="1">
-						<ratingbar name="rating_score" starSkin="skin_star1" starNum="5" value="3.5" pos="10,16"  />
 						<text name="txt_score" pos="10,36" font="adding:-5"  >8.5分</text>
 						<link pos="[5,36" cursor="hand" colorText="#1e78d5" href="www.163.com" font="adding:-5" >投票</link>
 					</window>
@@ -262,7 +261,7 @@
 
 		<RotateWindow>
 			<RotateWindow AnimImg="png:image_animation_foreground_png" size="270,270" msgTransparent="1" speed="2" turn="right">
-				<window skin="image_animation_bk_png" pos="0,0,-0,-0" msgTransparent="1">
+				<window pos="0,0,-0,-0" msgTransparent="1">
 					<text name="percent_wnd" colorText="#ffffff" font="size:40" pos="| -50,|-50" align="center" height="100" width="100">1%</text>
 				</window>
 			</RotateWindow>
@@ -291,10 +290,7 @@
 		<spinButton_微调按钮>
 			<window size="100,30" class="cls_edit" trackMouseEvent="1">
 				<edit pos="0,0,-16,-0" name="edit_spin" margin-x="0" margin-y="0"/>
-				<spinButton pos="[0,0,-0,-0" max="20" min="10" value="11" buddy="edit_spin">
-					<button name="btn_up"/>
-					<button name="btn_down"/>
-				</spinButton>
+				<spinButton pos="[0,0,-0,-0" max="20" min="10" value="11" buddy="edit_spin"/>
 			</window>
 		</spinButton_微调按钮>
 
@@ -356,15 +352,8 @@
 		</tileview>
 
 		<toggle>
-			<toggle pos="0,0" />
+			<toggle pos="0,0" offset="0,-0.5" name="tgl_switch" skin="_skin.sys.tree.toggle" />
 		</toggle>
-
-		<toolbox>
-			<toolbox pos="0,0" size="120,32"  skin="" icon=""
-                 text="toolbox" animate="1"
-                 class=""/>	
-		</toolbox>
-
 
 
 		<treectrl>

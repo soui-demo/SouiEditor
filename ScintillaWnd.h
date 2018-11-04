@@ -29,6 +29,8 @@ public:
 	BOOL OpenFile(LPCTSTR lpFileName);
 	void DoSave();
 
+	void ResetRedo();
+
 	void SetDirty(bool bDirty);
 
 	BOOL SaveFile(LPCTSTR lpFileName);
