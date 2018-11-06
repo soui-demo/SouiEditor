@@ -346,7 +346,6 @@ namespace SOUI
 			int x1;
 			int y1;
 
-
 			BOOL bx = FALSE;
 			BOOL by = FALSE;
 
@@ -540,7 +539,6 @@ namespace SOUI
 				return;
 			}
 
-
 			Oldx = Oldx + x*x1;
 			Oldy = Oldy + y*y1;
 			m_pRealWnd->GetParent()->RequestRelayout();
@@ -557,15 +555,10 @@ namespace SOUI
 		}
 	}
 
-
 	void SMoveWnd::AdjustRect()
 	{
 		CRect rect;
 		GetWindowRect(rect);
-
-
-
-
 
 		m_rcPos1.left = rect.left;
 		m_rcPos1.top = rect.top;
@@ -640,6 +633,8 @@ namespace SOUI
 		SouiLayoutParamStruct *pSouiLayoutParamStruct = (SouiLayoutParamStruct*)pSouiLayoutParam->GetRawData();
 
 		ILayoutParam *pSouiLayoutParam1 = m_pRealWnd->GetLayoutParam();
+		if (!pSouiLayoutParam1)
+			return;
 		SouiLayoutParamStruct *pSouiLayoutParamStruct1 = (SouiLayoutParamStruct*)pSouiLayoutParam1->GetRawData();
 
 
@@ -795,6 +790,8 @@ namespace SOUI
 		SouiLayoutParamStruct *pSouiLayoutParamStruct = (SouiLayoutParamStruct*)pSouiLayoutParam->GetRawData();
 
 		SouiLayoutParam *pSouiLayoutParam1 = m_pRealWnd->GetLayoutParamT<SouiLayoutParam>();
+		if (!pSouiLayoutParam1)
+			return;
 		SouiLayoutParamStruct *pSouiLayoutParamStruct1 = (SouiLayoutParamStruct*)pSouiLayoutParam1->GetRawData();
 
 		//有margin的情况
