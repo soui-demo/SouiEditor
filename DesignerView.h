@@ -24,6 +24,8 @@ namespace SOUI
 		SDesignerView(SHostDialog *pMainHost, SWindow *pContainer, STreeCtrl *pTreeXmlStruct);
 		~SDesignerView();
 
+		long GetWindowUserData(SWindow *pWnd);
+
 		SMoveWnd* m_CurSelCtrl;  //用户当前选择的控件
 		SList<SWindow*> m_CopyList;
 

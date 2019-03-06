@@ -3,7 +3,7 @@
 	ProjectType="Visual C++"
 	Version="9,00"
 	Name="souieditor"
-	ProjectGUID="{DC154664-921D-37BD-90A3-742EDC5F942C}"
+	ProjectGUID="{5EC44A80-9F68-3D8A-A14B-794218977DA3}"
 	Keyword="Qt4VSv1.0">
 	<Platforms>
 		<Platform
@@ -20,7 +20,7 @@
 			UseOfMfc="0">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories=".,.,$(SOUIPATH)/utilities/include,$(SOUIPATH)/soui/include,$(SOUIPATH)/components,$(SOUIPATH)/config,.,$(SOUIPATH)/controls.extend,$(SOUIPATH)/third-part/Scintilla/include,..\..\soui.git\tools\mkspecs\win32-msvc2008"
+				AdditionalIncludeDirectories=".,.,$(SOUIPATH)/utilities/include,$(SOUIPATH)/soui/include,$(SOUIPATH)/components,$(SOUIPATH)/config,.,controls,$(SOUIPATH)/controls.extend,$(SOUIPATH)/controls.extend/gif,$(SOUIPATH)/third-part/Scintilla/include,..\..\soui.git\tools\mkspecs\win32-msvc2008"
 				AdditionalOptions="/MP"
 				AssemblerListingLocation="release\"
 				DebugInformationFormat="0"
@@ -83,7 +83,7 @@
 			UseOfMfc="0">
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories=".,.,$(SOUIPATH)/utilities/include,$(SOUIPATH)/soui/include,$(SOUIPATH)/components,$(SOUIPATH)/config,.,$(SOUIPATH)/controls.extend,$(SOUIPATH)/third-part/Scintilla/include,..\..\soui.git\tools\mkspecs\win32-msvc2008"
+				AdditionalIncludeDirectories=".,.,$(SOUIPATH)/utilities/include,$(SOUIPATH)/soui/include,$(SOUIPATH)/components,$(SOUIPATH)/config,.,controls,$(SOUIPATH)/controls.extend,$(SOUIPATH)/controls.extend/gif,$(SOUIPATH)/third-part/Scintilla/include,..\..\soui.git\tools\mkspecs\win32-msvc2008"
 				AdditionalOptions="/MP"
 				AssemblerListingLocation="debug\"
 				DebugInformationFormat="3"
@@ -172,23 +172,35 @@
 			<File
 				RelativePath="D:\work\soui.git\controls.extend\ExtendSkins.cpp" />
 			<File
+				RelativePath="ui\emoji\FaceList_soui.cpp" />
+			<File
 				RelativePath="MainDlg.cpp" />
 			<File
 				RelativePath="ResManger.cpp" />
 			<File
+				RelativePath="skin\SAntialiasSkin.cpp" />
+			<File
 				RelativePath="D:\work\soui.git\controls.extend\SButtonEx.cpp" />
 			<File
-				RelativePath="D:\work\soui.git\controls.extend\SChromeTabCtrl.cpp" />
+				RelativePath="controls\SCheckBox2.cpp" />
+			<File
+				RelativePath="controls\SChromeTabCtrl.cpp" />
 			<File
 				RelativePath="colorpicker\SColorPicker.cpp" />
+			<File
+				RelativePath="controls\SColorizeText.cpp" />
 			<File
 				RelativePath="SDemoSkin.cpp" />
 			<File
 				RelativePath="SDesignerRoot.cpp" />
 			<File
+				RelativePath="skin\SFrameRect.cpp" />
+			<File
 				RelativePath="D:\work\soui.git\controls.extend\SFreeMoveWindow.cpp" />
 			<File
 				RelativePath="D:\work\soui.git\controls.extend\gif\SGifPlayer.cpp" />
+			<File
+				RelativePath="controls\SGroupList.cpp" />
 			<File
 				RelativePath="D:\work\soui.git\controls.extend\SMcListViewEx\SHeaderCtrlEx.cpp" />
 			<File
@@ -208,6 +220,10 @@
 			<File
 				RelativePath="SMoveWnd.cpp" />
 			<File
+				RelativePath="controls\SMyGifPlayer.cpp" />
+			<File
+				RelativePath="controls\SMyImage.cpp" />
+			<File
 				RelativePath="propgrid\SPropertyGrid.cpp" />
 			<File
 				RelativePath="propgrid\propitem\SPropertyItem-Color.cpp" />
@@ -226,8 +242,6 @@
 			<File
 				RelativePath="D:\work\soui.git\controls.extend\SScrollText.cpp" />
 			<File
-				RelativePath="D:\work\soui.git\controls.extend\gif\SSkinAPNG.cpp" />
-			<File
 				RelativePath="D:\work\soui.git\controls.extend\gif\SSkinGif.cpp" />
 			<File
 				RelativePath="D:\work\soui.git\controls.extend\SSkinMutiFrameImg.cpp" />
@@ -236,13 +250,21 @@
 			<File
 				RelativePath="D:\work\soui.git\controls.extend\STabCtrl2.cpp" />
 			<File
+				RelativePath="controls\STabCtrlHeaderBinder.cpp" />
+			<File
+				RelativePath="controls\STabCtrlTemplate.cpp" />
+			<File
 				RelativePath="D:\work\soui.git\controls.extend\SText.cpp" />
 			<File
 				RelativePath="D:\work\soui.git\controls.extend\STurn3DView.cpp" />
 			<File
+				RelativePath="skin\S_GDIPSkin.cpp" />
+			<File
 				RelativePath="ScintillaWnd.cpp" />
 			<File
 				RelativePath="SouiEditor.cpp" />
+			<File
+				RelativePath="SouiEditorApp.cpp" />
 			<File
 				RelativePath="SouiRealWndHandler.cpp" />
 			<File
@@ -253,6 +275,8 @@
 				RelativePath="pugixml_write.cpp" />
 			<File
 				RelativePath="stdafx.cpp" />
+			<File
+				RelativePath="skin\utils.cpp" />
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -297,6 +321,8 @@
 			<File
 				RelativePath="D:\work\soui.git\controls.extend\ExtendSkins.h" />
 			<File
+				RelativePath="ui\emoji\FaceList_soui.h" />
+			<File
 				RelativePath="FileHelper.h" />
 			<File
 				RelativePath="Global.h" />
@@ -307,21 +333,29 @@
 			<File
 				RelativePath="ResManger.h" />
 			<File
-				RelativePath="D:\work\soui.git\controls.extend\gif\SAniImgFrame.h" />
+				RelativePath="skin\SAntialiasSkin.h" />
 			<File
 				RelativePath="D:\work\soui.git\controls.extend\SButtonEx.h" />
 			<File
-				RelativePath="D:\work\soui.git\controls.extend\SChromeTabCtrl.h" />
+				RelativePath="controls\SCheckBox2.h" />
+			<File
+				RelativePath="controls\SChromeTabCtrl.h" />
 			<File
 				RelativePath="colorpicker\SColorPicker.h" />
+			<File
+				RelativePath="controls\SColorizeText.h" />
 			<File
 				RelativePath="SDemoSkin.h" />
 			<File
 				RelativePath="SDesignerRoot.h" />
 			<File
+				RelativePath="skin\SFrameRect.h" />
+			<File
 				RelativePath="D:\work\soui.git\controls.extend\SFreeMoveWindow.h" />
 			<File
 				RelativePath="D:\work\soui.git\controls.extend\gif\SGifPlayer.h" />
+			<File
+				RelativePath="controls\SGroupList.h" />
 			<File
 				RelativePath="D:\work\soui.git\controls.extend\SMcListViewEx\SHeaderCtrlEx.h" />
 			<File
@@ -342,6 +376,10 @@
 				RelativePath="D:\work\soui.git\controls.extend\SListCtrlEx.h" />
 			<File
 				RelativePath="SMoveWnd.h" />
+			<File
+				RelativePath="controls\SMyGifPlayer.h" />
+			<File
+				RelativePath="controls\SMyImage.h" />
 			<File
 				RelativePath="propgrid\SPropertyEmbedWndHelper.hpp" />
 			<File
@@ -367,8 +405,6 @@
 			<File
 				RelativePath="D:\work\soui.git\controls.extend\SScrollText.h" />
 			<File
-				RelativePath="D:\work\soui.git\controls.extend\gif\SSkinAPNG.h" />
-			<File
 				RelativePath="D:\work\soui.git\controls.extend\gif\SSkinGif.h" />
 			<File
 				RelativePath="D:\work\soui.git\controls.extend\SSkinMutiFrameImg.h" />
@@ -377,11 +413,19 @@
 			<File
 				RelativePath="D:\work\soui.git\controls.extend\STabCtrl2.h" />
 			<File
+				RelativePath="controls\STabCtrlHeaderBinder.h" />
+			<File
+				RelativePath="controls\STabCtrlTemplate.h" />
+			<File
 				RelativePath="D:\work\soui.git\controls.extend\SText.h" />
 			<File
 				RelativePath="D:\work\soui.git\controls.extend\STurn3DView.h" />
 			<File
+				RelativePath="skin\S_GDIPSkin.h" />
+			<File
 				RelativePath="ScintillaWnd.h" />
+			<File
+				RelativePath="SouiEditorApp.h" />
 			<File
 				RelativePath="SouiRealWndHandler.h" />
 			<File
@@ -415,6 +459,8 @@
 						Outputs="stdafx.h.cpp" />
 				</FileConfiguration>
 			</File>
+			<File
+				RelativePath="skin\utils.h" />
 			<File
 				RelativePath="xpm_icons.h" />
 		</Filter>

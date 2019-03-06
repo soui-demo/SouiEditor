@@ -1,13 +1,8 @@
 ﻿#pragma once
 
-extern long g_nUIElmIndex;			//用来给设计器中的控件一个索引, 以便查找
 
 namespace SOUI
 {
-	inline long GetUIElmIndex()
-	{
-		return ++g_nUIElmIndex;
-	}
 
 	class SUIWindow : public SWindow
 	{

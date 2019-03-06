@@ -76,7 +76,7 @@ public:
 	bool OnWorkspaceTabSelChanged(EventArgs *pEvtBase);
 	bool OnWorkspaceXMLDbClick(EventArgs *pEvtBase);
 
-	void OnScintillaSave(CScintillaWnd * pObj, int custom_msg, SStringT str);
+	static void OnScintillaSave(CScintillaWnd * pObj, int custom_msg, SStringT str);
 
 	void RefreshWorkSpaceAllList();
 

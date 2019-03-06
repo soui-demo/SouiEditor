@@ -358,9 +358,9 @@ void CMainDlg::LoadAppCfg()
 	} while (m_RecentFileMenu.DeleteMenu(0, MF_BYCOMMAND | MF_BYPOSITION));
 	
 	UINT MenuId = MenuId_Start;
-	for (auto &recentitem : m_vecRecentFile)
+	for (std::vector<SStringT>::iterator it = m_vecRecentFile.begin();it != m_vecRecentFile.end();it++)
 	{
-		m_RecentFileMenu.InsertMenu(0, MF_BYCOMMAND|MF_BYPOSITION, MenuId++, recentitem + L"  ");
+		m_RecentFileMenu.InsertMenu(0, MF_BYCOMMAND|MF_BYPOSITION, MenuId++, (*it) + L"  ");
 	}
 }
 
@@ -378,10 +378,10 @@ void CMainDlg::SaveAppCfg()
 	nodeCommentStudents.set_value(L"SouiEditor Config");
 	// 普通节点1
 	pugi::xml_node nodeRecents = nodeRoot.append_child(L"recent_file");
-	for (auto &recentitem : m_vecRecentFile)
+	for (std::vector<SStringT>::iterator it = m_vecRecentFile.begin();it != m_vecRecentFile.end();it++)
 	{
 		pugi::xml_node nodeRecent = nodeRecents.append_child(L"item");
-		nodeRecent.append_attribute(L"path").set_value(recentitem);
+		nodeRecent.append_attribute(L"path").set_value(*it);
 	}
 
 	xmlDoc.save_file(g_CurDir + L"sEditor.cfg");

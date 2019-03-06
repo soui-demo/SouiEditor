@@ -23,3 +23,4 @@
 
 using namespace SOUI;
 
+#include "SouiEditorApp.h"

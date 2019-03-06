@@ -14,7 +14,6 @@
 #include "stabctrl2.h"
 #include "SButtonEx.h"
 #include "SSkinMutiFrameImg.h"
-#include "SChromeTabCtrl.h"
 #include "simagemaskwnd.h"
 #include "SFreeMoveWindow.h"
 #include "SVscrollbar.h"
@@ -32,6 +31,8 @@
 #include "SRadioBox2.h"
 #include "SMcListViewEx/SHeaderCtrlEx.h"
 #include "SDemoSkin.h"
+#include "controls/SGroupList.h"
+#include "controls/SCheckBox2.h"
 
 
 //从PE文件加载，注意从文件加载路径位置
@@ -52,42 +53,6 @@ ROBJ_IN_CPP
 
 SStringT g_CurDir;
 void RegisterExtendControl(SApplication *theApp);
-BOOL g_bHookCreateWnd = FALSE;
-
-class SMyApp : public SApplication 
-{
-public:
-
-	SMyApp::SMyApp(IRenderFactory *pRendFactory, HINSTANCE hInst, LPCTSTR pszHostClassName = _T("SOUIHOST"))
-		: SApplication(pRendFactory, hInst, pszHostClassName)
-	{
-	}
-
-	virtual SWindow * CreateWindowByName(LPCWSTR pszWndClass) const
-	{
-		if (!g_bHookCreateWnd)
-			return (SWindow*)CreateObject(SObjectInfo(pszWndClass, Window));
-		else
-		{
-			SStringT wndClassname = pszWndClass;
-			if (wndClassname.CompareNoCase(_T("realwnd")) == 0)
-				wndClassname = _T("ui_window");
-
-			SWindow *pChild = (SWindow*)CreateObject(SObjectInfo(wndClassname, Window));
-			if (!pChild)
-			{
-				if (wndClassname.CompareNoCase(L"template") != 0)
-					pChild = (SWindow*)CreateObject(SObjectInfo(_T("ui_window"), Window));
-			}
-
-			if (pChild)
-			{
-				pChild->SetUserData((ULONG_PTR)(GetUIElmIndex()));
-			}
-			return pChild;
-		}
-	}
-};
 
 
 int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE /*hPrevInstance*/, LPTSTR lpstrCmdLine, int /*nCmdShow*/)
@@ -100,30 +65,20 @@ int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE /*hPrevInstance*/, LPTSTR lp
     SComMgr *pComMgr = new SComMgr;
 
     //将程序的运行路径修改到项目所在目录所在的目录
-    TCHAR szCurrentDir[MAX_PATH] = { 0 };
+
+	TCHAR szCurrentDir[MAX_PATH] = { 0 };
+#ifndef _DEBUG
     GetModuleFileName(NULL, szCurrentDir, sizeof(szCurrentDir));
     LPTSTR lpInsertPos = _tcsrchr(szCurrentDir, _T('\\'));
 	lpInsertPos[1] = 0;
-	g_CurDir = szCurrentDir;
     _tcscpy(lpInsertPos + 1, _T("..\\SouiEditor"));
-
-    SetCurrentDirectory(szCurrentDir);
+	SetCurrentDirectory(szCurrentDir);
+#endif
+	GetCurrentDirectory(MAX_PATH,szCurrentDir);
+	g_CurDir = szCurrentDir;
+	g_CurDir += _T("\\");
     {
-/*
-#ifdef WIN64
-		HMODULE hSci = LoadLibrary(g_CurDir + _T("SciLexer64.dll"));
-		if (!hSci) {
-			MessageBox(GetActiveWindow(), _T("Load SciLexer64.dll failed! \nCopying third-part/SciLexer/bin/SciLexer64.dll to the running folder should resolve the problem!!"), _T("error"), MB_OK | MB_ICONSTOP);
-			return -1;
-		}
-#else
-		HMODULE hSci = LoadLibrary(g_CurDir + _T("SciLexer.dll"));
-		if (!hSci) {
-			MessageBox(GetActiveWindow(), _T("Load SciLexer.dll failed! \nCopying third-part/SciLexer/bin/SciLexer.dll to the running folder should resolve the problem!!"), _T("error"), MB_OK | MB_ICONSTOP);
-			return -1;
-		}
-#endif // W64
-*/
+
 		Scintilla_RegisterClasses(hInstance);
 
         BOOL bLoaded=FALSE;
@@ -137,7 +92,7 @@ int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE /*hPrevInstance*/, LPTSTR lp
         SASSERT_FMT(bLoaded,_T("load interface [%s] failed!"),_T("imgdecoder"));
 
         pRenderFactory->SetImgDecoderFactory(pImgDecoderFactory);
-		SMyApp *theApp = new SMyApp(pRenderFactory, hInstance);
+		SouiEditorApp *theApp = new SouiEditorApp(pRenderFactory, hInstance);
 
 		theApp->RegisterWindowClass<SDesignerRoot>();
 		theApp->RegisterWindowClass<SUIWindow>();
@@ -152,6 +107,7 @@ int WINAPI _tWinMain(HINSTANCE hInstance, HINSTANCE /*hPrevInstance*/, LPTSTR lp
 		theApp->RegisterWindowClass<SScrollText>();
 		theApp->RegisterWindowClass<SRotateWindow>();
 		theApp->RegisterWindowClass<SImgCanvas>();
+
 
 		// 注册扩展控件
 		RegisterExtendControl(theApp);
@@ -256,6 +212,8 @@ void RegisterExtendControl(SApplication *theApp)
 	theApp->RegisterWindowClass<SIPAddressCtrl>();
 	theApp->RegisterWindowClass<STurn3dView>();
 	theApp->RegisterWindowClass<SRadioBox2>();
+    theApp->RegisterWindowClass<SCheckBox2>();
+    theApp->RegisterWindowClass<SGroupList>();
 
 	
 	//extened skins

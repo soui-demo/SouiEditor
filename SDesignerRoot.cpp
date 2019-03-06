@@ -2,7 +2,6 @@
 #include "SDesignerRoot.h"
 
 
-long g_nUIElmIndex = 0;
 
 namespace SOUI{
 
@@ -10,25 +9,6 @@ namespace SOUI{
 	{
 		
 	}
-
-	/*SWindow * SUIWindow::CreateChild(LPCWSTR classname)
-	{
-		SStringT wndClassname = classname;
-		if (wndClassname.CompareNoCase(_T("realwnd")) == 0)
-			wndClassname = _T("ui_window");
-		
-		SWindow *pChild = SApplication::getSingleton().CreateWindowByName(wndClassname);
-		if (!pChild)
-		{
-			pChild = SApplication::getSingleton().CreateWindowByName(_T("ui_window"));
-		}
-		
-		if (pChild)
-		{
-			pChild->SetUserData((ULONG_PTR)(GetUIElmIndex()));
-		}
-		return pChild;
-	}*/
 
 	//////////////////////////////////////////////////////////////////////////
 

@@ -53,7 +53,9 @@ SDesignerView::SDesignerView(SHostDialog *pMainHost, SWindow *pContainer, STreeC
 	m_pMainHost = pMainHost;
 	m_treeXmlStruct = pTreeXmlStruct;
 	m_ndata = 0;
-	g_nUIElmIndex = 0;
+
+	((SouiEditorApp*)SApplication::getSingletonPtr())->InitEnv();
+
 	m_bXmlResLoadOK = false;
 	m_treeXmlStruct->GetEventSet()->subscribeEvent(EVT_TC_SELCHANGED, Subscriber(&SDesignerView::OnTCSelChanged, this));
 
@@ -183,9 +185,11 @@ BOOL SDesignerView::InsertLayoutToMap(SStringT strFileName)
 BOOL SDesignerView::LoadLayout(SStringT strFileName)
 {
 	m_CurSelCtrl = NULL;
+
 	m_ndata = 0;
-	g_nUIElmIndex = 0;
 	m_nSciCaretPos = 0;
+
+	((SouiEditorApp*)SApplication::getSingletonPtr())->InitEnv();
 
 	//设置uidef为当前皮肤的uidef
 	UseEditorUIDef(false);
@@ -370,7 +374,6 @@ BOOL SDesignerView::LoadLayout(SStringT strFileName)
 	m_pMoveWndRoot->m_pRealWnd = m_pRealWndRoot;
 	m_pMoveWndRoot->m_Desiner = this;
 
-	int a = m_pMoveWndRoot->GetUserData();
 	m_mapMoveRealWnd.RemoveAll();
 	m_mapMoveRealWnd[m_pMoveWndRoot->m_pRealWnd] = m_pMoveWndRoot;
 
@@ -844,7 +847,7 @@ void SDesignerView::SetCurrentCtrl(pugi::xml_node xmlNode, SMoveWnd *pWnd)
 	m_pContainer->Invalidate();
 
 	m_treeXmlStruct->GetEventSet()->unsubscribeEvent(EVT_TC_SELCHANGED, Subscriber(&SDesignerView::OnTCSelChanged, this));
-	GoToXmlStructItem(m_CurSelCtrl->m_pRealWnd->GetUserData(), m_treeXmlStruct->GetRootItem());
+	GoToXmlStructItem(GetWindowUserData(m_CurSelCtrl->m_pRealWnd), m_treeXmlStruct->GetRootItem());
 	m_treeXmlStruct->GetEventSet()->subscribeEvent(EVT_TC_SELCHANGED, Subscriber(&SDesignerView::OnTCSelChanged, this));
 }
 
@@ -865,7 +868,7 @@ void SDesignerView::UpdatePosToXmlNode(SUIWindow *pRealWnd, SMoveWnd* pMoveWnd)
 	}
 
 	SStringT s;
-	s.Format(_T("%d"), pRealWnd->GetUserData());
+	s.Format(_T("%d"), GetWindowUserData(pRealWnd));
 	pugi::xml_node xmlNode = FindNodeByAttr(m_CurrentLayoutNode, L"data", s);
 	if (!xmlNode)
 	{
@@ -1516,7 +1519,8 @@ bool SDesignerView::OnPropGridValueChanged(EventArgs *pEvt)
 	}*/
 
 	// 先记下原来选的控件是第几个顺序的控件, 再进行重布局
-	int data = ((SMoveWnd*)m_CurSelCtrl)->GetUserData();
+	int data = GetWindowUserData(m_CurSelCtrl);
+
 	ReLoadLayout();
 
 	if (bRoot)
@@ -1627,7 +1631,8 @@ BOOL SDesignerView::ReLoadLayout(BOOL bClearSel)
 		m_CurSelCtrl = NULL;
 
 	m_ndata = 0;
-	g_nUIElmIndex = 0;
+	((SouiEditorApp*)SApplication::getSingletonPtr())->InitEnv();
+
 	//设置uidef为当前皮肤的uidef
 	UseEditorUIDef(false);
 
@@ -1990,7 +1995,7 @@ void SDesignerView::GetCodeFromEditor()
 	BOOL bRoot = FALSE;
 
 	// 先记下原来选的控件是第几个顺序的控件, 再进行重布局
-	int data = ((SMoveWnd*)m_CurSelCtrl)->GetUserData();
+	int data = GetWindowUserData(m_CurSelCtrl);
 	ReLoadLayout();
 
 	if (bRoot)
@@ -2104,7 +2109,7 @@ void SDesignerView::GetCodeFromEditor(CScintillaWnd* _pSciWnd)//从代码编辑�
 	// 	m_pMoveWndRoot->Click(0, CPoint(0, 0));
 
 	// 先记下原来选的控件是第几个顺序的控件, 再进行重布局
-	int data = ((SMoveWnd*)m_CurSelCtrl)->GetUserData();
+	int data = GetWindowUserData(m_CurSelCtrl);
 	ReLoadLayout();
 
 	if (bRoot)
@@ -2199,7 +2204,7 @@ void SDesignerView::NewWnd(CPoint pt, SMoveWnd *pM)
 	else
 	{
 		SStringT s;
-		s.Format(_T("%d"), pM->m_pRealWnd->GetUserData());
+		s.Format(_T("%d"), GetWindowUserData(pM->m_pRealWnd));
 		pugi::xml_node xmlNodeRealWnd = FindNodeByAttr(m_CurrentLayoutNode, L"data", s);
 		if (bIsContainerCtrl(xmlNodeRealWnd.name()))
 		{
@@ -2285,7 +2290,7 @@ void SDesignerView::NewWnd(CPoint pt, SMoveWnd *pM)
 	{
 		//找到m_realWnd控件对应的xml节点
 		SStringT s;
-		s.Format(_T("%d"), pRealWnd->GetUserData());
+		s.Format(_T("%d"), GetWindowUserData(pRealWnd));
 		pugi::xml_node xmlNodeRealWnd = FindNodeByAttr(m_CurrentLayoutNode, L"data", s);
 		//将新创建的控件写入父控件的xml节点
 		SetCurrentCtrl(xmlNodeRealWnd.append_copy(m_curSelXmlNode), Wnd1);
@@ -2523,7 +2528,8 @@ SWindow* SDesignerView::FindChildByUserData(SWindow* pWnd, int data)
 	SWindow *pChild = pWnd->GetWindow(GSW_FIRSTCHILD);
 	while (pChild)
 	{
-		int child_data = pChild->GetUserData();
+		int child_data = GetWindowUserData(pChild);
+
 		if (child_data == data)
 			return pChild;
 		pChild = pChild->GetWindow(GSW_NEXTSIBLING);
@@ -2641,6 +2647,11 @@ BOOL SDesignerView::LoadConfig(pugi::xml_document &doc,const SStringT & cfgFile)
 	}
 	g_SysDataMgr.LoadSysData(g_CurDir + L"Config");
 	return result;
+}
+
+long SDesignerView::GetWindowUserData(SWindow *pWnd)
+{
+	return ((SouiEditorApp*)SApplication::getSingletonPtr())->GetWindowIndex(pWnd);
 }
 
 }

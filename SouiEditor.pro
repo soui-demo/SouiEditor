@@ -26,7 +26,7 @@ RC_FILE += souieditor.rc
 
 
 # Input
-HEADERS += Adapter.h \
+HEADERS += SouiEditorApp.h Adapter.h \
            CDebug.h \
 		   Global.h \
 		   CmdLine.h \
@@ -78,7 +78,7 @@ HEADERS += Adapter.h \
 		   DragDownMgr.h \
 		   SDemoSkin.h \
 
-SOURCES += Adapter.cpp \
+SOURCES += SouiEditorApp.cpp Adapter.cpp \
 		   DesignerView.cpp \
            helpapi.cpp \
            MainDlg.cpp \
@@ -139,6 +139,8 @@ SOURCES+=$(SOUIPATH)/controls.extend/SListCtrlEx.cpp
 SOURCES+=$(SOUIPATH)/controls.extend/SRatingBar.cpp
 SOURCES+=$(SOUIPATH)/controls.extend/SRadioBox2.cpp
 SOURCES+=$(SOUIPATH)/controls.extend/SMcListViewEx/SHeaderCtrlEx.cpp
+SOURCES+=$(SOUIPATH)/controls.extend/SCheckBox2.cpp
+SOURCES+=$(SOUIPATH)/controls.extend/SGroupList.cpp
 
 
 HEADERS+=$(SOUIPATH)/controls.extend/image3d/3dlib.h
@@ -165,4 +167,7 @@ HEADERS+=$(SOUIPATH)/controls.extend/SListCtrlEx.h
 HEADERS+=$(SOUIPATH)/controls.extend/SRatingBar.h
 HEADERS+=$(SOUIPATH)/controls.extend/SRadioBox2.h
 HEADERS+=$(SOUIPATH)/controls.extend/SMcListViewEx/SHeaderCtrlEx.h
+HEADERS+=$(SOUIPATH)/controls.extend/SCheckBox2.h
+HEADERS+=$(SOUIPATH)/controls.extend/SGroupList.h
+
 

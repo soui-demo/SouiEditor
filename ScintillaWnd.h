@@ -17,7 +17,7 @@ protected:
 };
 
 class CScintillaWnd;
-typedef void (CSimpleWnd::*SCIWND_FN_CALLBACK)(CScintillaWnd*, int, SStringT);
+typedef void (*SCIWND_FN_CALLBACK)(CScintillaWnd*, int, SStringT);
 
 // CScintillaWnd
 class CScintillaWnd : public CSimpleWnd

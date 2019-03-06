@@ -19,12 +19,10 @@ extern CMainDlg* g_pMainDlg;
 //////////////////////////////////////////////////////////////////////////
 CScintillaModule::CScintillaModule()
 {
-	//m_hModule=LoadLibrary(STR_SCINTILLADLL);
 }
 
 CScintillaModule::~CScintillaModule()
 {
-	//if(m_hModule) FreeLibrary(m_hModule);
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -185,7 +183,7 @@ void CScintillaWnd::SetDirty(bool bDirty)
 
 	if (m_fnCallback && !m_strFileName.IsEmpty())
 	{
-		(this->*m_fnCallback)(this, 1, bDirty ? _T("dirty") : _T(""));
+		(this->m_fnCallback)(this, 1, bDirty ? _T("dirty") : _T(""));
 	}
 }
 
@@ -638,7 +636,7 @@ void CScintillaWnd::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags)
 		{
 			if (m_fnCallback)
 			{
-				(this->*m_fnCallback)(this, 0, m_strFileName);
+				(this->m_fnCallback)(this, 0, m_strFileName);
 			}
 		}
 	}
