@@ -95,8 +95,7 @@ if %selected%==1 (
 	call !vsvarbat! %target%
 	rem call "!value!" %target%
 	goto built
-)
- else if %selected%==7 (
+) else if %selected%==7 (
 	SET specs=win32-msvc2005
 	SET proj_ext=vcproj
 	SET vsvarbat="%VS80COMNTOOLS%..\..\VC\vcvarsall.bat"

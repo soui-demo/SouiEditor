@@ -30,9 +30,10 @@
 #include "STurn3DView.h"
 #include "SRadioBox2.h"
 #include "SMcListViewEx/SHeaderCtrlEx.h"
+#include <SGroupList.h>
+#include <SChromeTabCtrl.h>
+
 #include "SDemoSkin.h"
-#include "controls/SGroupList.h"
-#include "controls/SCheckBox2.h"
 
 
 //从PE文件加载，注意从文件加载路径位置
@@ -212,7 +213,6 @@ void RegisterExtendControl(SApplication *theApp)
 	theApp->RegisterWindowClass<SIPAddressCtrl>();
 	theApp->RegisterWindowClass<STurn3dView>();
 	theApp->RegisterWindowClass<SRadioBox2>();
-    theApp->RegisterWindowClass<SCheckBox2>();
     theApp->RegisterWindowClass<SGroupList>();
 
 	
