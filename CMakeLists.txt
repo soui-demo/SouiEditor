@@ -1,66 +1,90 @@
-﻿#
+#
 # 1394020320@qq.com
 #
 
-include_directories(${PROJECT_SOURCE_DIR}/config)
-include_directories(${PROJECT_SOURCE_DIR}/components)
-include_directories(${PROJECT_SOURCE_DIR}/utilities/include)
-include_directories(${PROJECT_SOURCE_DIR}/SOUI/include)
-include_directories(${PROJECT_SOURCE_DIR}/third-part/Scintilla/include)
+cmake_minimum_required(VERSION 3.4.3)
+project(SouiEditor)
+file (TO_CMAKE_PATH "$ENV{SOUIPATH}" SOUI_ROOT)
+
+include(${SOUI_ROOT}/__cmake/cotire.cmake)
+include(${SOUI_ROOT}/__cmake/internal_utils.cmake)
+include(${SOUI_ROOT}/__cmake/global.cmake)
+
+readSettingFile(UNICODE "1" USE_UNICODE)
+readSettingFile(WCHAR "1" WCHAR_AS_DEFAULT)
+readSettingFile(MT "0" SHARED_CRT)
+readSettingFile(SUPPORT_XP "1" XP_TOOLSET)
+
+#message(STATUS "USE_UNICODE: ${USE_UNICODE}")
+#message(STATUS "WCHAR_AS_DEFAULT: ${WCHAR_AS_DEFAULT}")
+#message(STATUS "SHARED_CRT: ${SHARED_CRT}")
+#message(STATUS "XP_TOOLSET: ${XP_TOOLSET}")
+
+message(STATUS "SOUI_ROOT: ${SOUI_ROOT}")
+
+config_compiler_and_linker()
+
+include_directories(${SOUI_ROOT}/config)
+include_directories(${SOUI_ROOT}/components)
+include_directories(${SOUI_ROOT}/utilities/include)
+include_directories(${SOUI_ROOT}/SOUI/include)
+include_directories(${SOUI_ROOT}/third-part/Scintilla/include)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-include_directories(${PROJECT_SOURCE_DIR}/controls.extend)
+include_directories(${SOUI_ROOT}/controls.extend)
 
 
 set(EXTENDCOTROLS ${EXTENDCOTROLS}
-	${CMAKE_SOURCE_DIR}/controls.extend/image3d/3dlib.h
-	${CMAKE_SOURCE_DIR}/controls.extend/image3d/3dmatrix.h
-	${CMAKE_SOURCE_DIR}/controls.extend/image3d/3dTransform.h
-	${CMAKE_SOURCE_DIR}/controls.extend/ExtendSkins.h
-	${CMAKE_SOURCE_DIR}/controls.extend/image3d/PerspectiveTransform.h
-	${CMAKE_SOURCE_DIR}/controls.extend/gif/SAniImgFrame.h
-	${CMAKE_SOURCE_DIR}/controls.extend/SButtonEx.h
-	${CMAKE_SOURCE_DIR}/controls.extend/SChromeTabCtrl.h
-	${CMAKE_SOURCE_DIR}/controls.extend/SFreeMoveWindow.h
-	${CMAKE_SOURCE_DIR}/controls.extend/gif/SGifPlayer.h
-	#${CMAKE_SOURCE_DIR}/controls.extend/SImageEx.h
-	${CMAKE_SOURCE_DIR}/controls.extend/SImageMaskWnd.h
-	${CMAKE_SOURCE_DIR}/controls.extend/gif/SSkinAPNG.h
-	${CMAKE_SOURCE_DIR}/controls.extend/gif/SSkinGif.h
-	${CMAKE_SOURCE_DIR}/controls.extend/SSkinMutiFrameImg.h
-	${CMAKE_SOURCE_DIR}/controls.extend/STabCtrl2.h
-	${CMAKE_SOURCE_DIR}/controls.extend/SText.h
-	${CMAKE_SOURCE_DIR}/controls.extend/STurn3DView.h
-	${CMAKE_SOURCE_DIR}/controls.extend/SScrollText.h
-	${CMAKE_SOURCE_DIR}/controls.extend/SIPAddressCtrl.h
-	${CMAKE_SOURCE_DIR}/controls.extend/SListCtrlEx.h
-	${CMAKE_SOURCE_DIR}/controls.extend/SRatingBar.h
-	${CMAKE_SOURCE_DIR}/controls.extend/SRadioBox2.h
-	${CMAKE_SOURCE_DIR}/controls.extend/SMcListViewEx/SHeaderCtrlEx.h
+	${SOUI_ROOT}/controls.extend/image3d/3dlib.h
+	${SOUI_ROOT}/controls.extend/image3d/3dmatrix.h
+	${SOUI_ROOT}/controls.extend/image3d/3dTransform.h
+	${SOUI_ROOT}/controls.extend/ExtendSkins.h
+	${SOUI_ROOT}/controls.extend/image3d/PerspectiveTransform.h
+	${SOUI_ROOT}/controls.extend/gif/SAniImgFrame.h
+	${SOUI_ROOT}/controls.extend/SButtonEx.h
+	${SOUI_ROOT}/controls.extend/SChromeTabCtrl.h
+	${SOUI_ROOT}/controls.extend/SFreeMoveWindow.h
+	${SOUI_ROOT}/controls.extend/gif/SGifPlayer.h
+	#${SOUI_ROOT}/controls.extend/SImageEx.h
+	${SOUI_ROOT}/controls.extend/SImageMaskWnd.h
+	${SOUI_ROOT}/controls.extend/gif/SSkinAPNG.h
+	${SOUI_ROOT}/controls.extend/gif/SSkinGif.h
+	${SOUI_ROOT}/controls.extend/SSkinMutiFrameImg.h
+	${SOUI_ROOT}/controls.extend/STabCtrl2.h
+	${SOUI_ROOT}/controls.extend/SText.h
+	${SOUI_ROOT}/controls.extend/STurn3DView.h
+	${SOUI_ROOT}/controls.extend/SScrollText.h
+	${SOUI_ROOT}/controls.extend/SIPAddressCtrl.h
+	${SOUI_ROOT}/controls.extend/SListCtrlEx.h
+	${SOUI_ROOT}/controls.extend/SRatingBar.h
+	${SOUI_ROOT}/controls.extend/SRadioBox2.h
+	${SOUI_ROOT}/controls.extend/SMcListViewEx/SHeaderCtrlEx.h
+	${SOUI_ROOT}/controls.extend/SGroupList.h
 )
 
 set(EXTENDCOTROLS ${EXTENDCOTROLS}
-	${CMAKE_SOURCE_DIR}/controls.extend/image3d/3dlib.cpp
-	${CMAKE_SOURCE_DIR}/controls.extend/image3d/3dmatrix.cpp
-	${CMAKE_SOURCE_DIR}/controls.extend/image3d/3dtransform.cpp
-	${CMAKE_SOURCE_DIR}/controls.extend/ExtendSkins.cpp
-	${CMAKE_SOURCE_DIR}/controls.extend/SButtonEx.cpp
-	${CMAKE_SOURCE_DIR}/controls.extend/SChromeTabCtrl.cpp
-	${CMAKE_SOURCE_DIR}/controls.extend/SFreeMoveWindow.cpp
-	${CMAKE_SOURCE_DIR}/controls.extend/gif/SGifPlayer.cpp
-	#${CMAKE_SOURCE_DIR}/controls.extend/SImageEx.cpp
-	${CMAKE_SOURCE_DIR}/controls.extend/SImageMaskWnd.cpp
-	${CMAKE_SOURCE_DIR}/controls.extend/gif/SSkinAPNG.cpp
-	${CMAKE_SOURCE_DIR}/controls.extend/gif/SSkinGif.cpp
-	${CMAKE_SOURCE_DIR}/controls.extend/SSkinMutiFrameImg.cpp
-	${CMAKE_SOURCE_DIR}/controls.extend/STabCtrl2.cpp
-	${CMAKE_SOURCE_DIR}/controls.extend/SText.cpp
-	${CMAKE_SOURCE_DIR}/controls.extend/STurn3DView.cpp
-	${CMAKE_SOURCE_DIR}/controls.extend/SScrollText.cpp
-	${CMAKE_SOURCE_DIR}/controls.extend/SIPAddressCtrl.cpp
-	${CMAKE_SOURCE_DIR}/controls.extend/SListCtrlEx.cpp
-	${CMAKE_SOURCE_DIR}/controls.extend/SRatingBar.cpp
-	${CMAKE_SOURCE_DIR}/controls.extend/SRadioBox2.cpp
-	${CMAKE_SOURCE_DIR}/controls.extend/SMcListViewEx/SHeaderCtrlEx.cpp
+	${SOUI_ROOT}/controls.extend/image3d/3dlib.cpp
+	${SOUI_ROOT}/controls.extend/image3d/3dmatrix.cpp
+	${SOUI_ROOT}/controls.extend/image3d/3dtransform.cpp
+	${SOUI_ROOT}/controls.extend/ExtendSkins.cpp
+	${SOUI_ROOT}/controls.extend/SButtonEx.cpp
+	${SOUI_ROOT}/controls.extend/SChromeTabCtrl.cpp
+	${SOUI_ROOT}/controls.extend/SFreeMoveWindow.cpp
+	${SOUI_ROOT}/controls.extend/gif/SGifPlayer.cpp
+	#${SOUI_ROOT}/controls.extend/SImageEx.cpp
+	${SOUI_ROOT}/controls.extend/SImageMaskWnd.cpp
+	${SOUI_ROOT}/controls.extend/gif/SSkinAPNG.cpp
+	${SOUI_ROOT}/controls.extend/gif/SSkinGif.cpp
+	${SOUI_ROOT}/controls.extend/SSkinMutiFrameImg.cpp
+	${SOUI_ROOT}/controls.extend/STabCtrl2.cpp
+	${SOUI_ROOT}/controls.extend/SText.cpp
+	${SOUI_ROOT}/controls.extend/STurn3DView.cpp
+	${SOUI_ROOT}/controls.extend/SScrollText.cpp
+	${SOUI_ROOT}/controls.extend/SIPAddressCtrl.cpp
+	${SOUI_ROOT}/controls.extend/SListCtrlEx.cpp
+	${SOUI_ROOT}/controls.extend/SRatingBar.cpp
+	${SOUI_ROOT}/controls.extend/SRadioBox2.cpp
+	${SOUI_ROOT}/controls.extend/SMcListViewEx/SHeaderCtrlEx.cpp
+	${SOUI_ROOT}/controls.extend/SGroupList.cpp
 )
 
 file(GLOB_RECURSE CURRENT_HEADERS  *.h *.hpp)
@@ -74,10 +98,12 @@ source_group("SoUI Resouece" FILES ${CURRENT_SOUIS})
 source_group("Resource Files" FILES ${CURRENT_RC})
 source_group("Extend Cotrols" FILES ${EXTENDCOTROLS})
 
+link_directories(${SOUI_ROOT}/bin)
 add_executable(SouiEditor WIN32 ${CURRENT_HEADERS} ${CURRENT_SRCS} ${CURRENT_SOUIS} ${CURRENT_RC} ${EXTENDCOTROLS})
 
-add_dependencies(SouiEditor soui-sys-resource)
-target_link_libraries(SouiEditor utilities soui ${COM_LIBS} Scintilla imm32)
+#add_dependencies(SouiEditor soui-sys-resource)
+#target_link_libraries(SouiEditor utilities soui Scintilla imm32)
+target_link_libraries(SouiEditor debug utilitiesd optimized utilities debug souid optimized soui debug Scintillad optimized Scintilla imm32)
 
 set_target_properties(SouiEditor PROPERTIES DEBUG_POSTFIX ${CMAKE_DEBUG_POSTFIX})
 set_target_properties (SouiEditor PROPERTIES
