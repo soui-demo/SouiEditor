@@ -6,6 +6,11 @@ cmake_minimum_required(VERSION 3.4.3)
 project(SouiEditor)
 file (TO_CMAKE_PATH "$ENV{SOUIPATH}" SOUI_ROOT)
 
+message(STATUS "SOUI_ROOT: ${SOUI_ROOT}")
+if ("${SOUI_ROOT}" STREQUAL "")
+	message(FATAL_ERROR "FATAL:can't find env variable SOUIPATH, clone soui core and install wizard first, please.")
+endif()
+
 include(${SOUI_ROOT}/__cmake/cotire.cmake)
 include(${SOUI_ROOT}/__cmake/internal_utils.cmake)
 include(${SOUI_ROOT}/__cmake/global.cmake)
@@ -19,8 +24,6 @@ readSettingFile(SUPPORT_XP "1" XP_TOOLSET)
 #message(STATUS "WCHAR_AS_DEFAULT: ${WCHAR_AS_DEFAULT}")
 #message(STATUS "SHARED_CRT: ${SHARED_CRT}")
 #message(STATUS "XP_TOOLSET: ${XP_TOOLSET}")
-
-message(STATUS "SOUI_ROOT: ${SOUI_ROOT}")
 
 config_compiler_and_linker()
 
@@ -103,7 +106,12 @@ add_executable(SouiEditor WIN32 ${CURRENT_HEADERS} ${CURRENT_SRCS} ${CURRENT_SOU
 
 #add_dependencies(SouiEditor soui-sys-resource)
 #target_link_libraries(SouiEditor utilities soui Scintilla imm32)
-target_link_libraries(SouiEditor debug utilitiesd optimized utilities debug souid optimized soui debug Scintillad optimized Scintilla imm32)
+target_link_libraries(SouiEditor
+        debug utilitiesd optimized utilities
+        debug souid optimized soui
+        debug Scintillad optimized Scintilla
+        imm32
+)
 
 set_target_properties(SouiEditor PROPERTIES DEBUG_POSTFIX ${CMAKE_DEBUG_POSTFIX})
 set_target_properties (SouiEditor PROPERTIES

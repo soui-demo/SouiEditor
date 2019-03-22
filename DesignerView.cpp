@@ -976,26 +976,26 @@ SStringW SDesignerView::GetPosFromLayout(SouiLayoutParam *pLayoutParam, INT nPos
 {
 	SouiLayoutParamStruct *pSouiLayoutParamStruct = (SouiLayoutParamStruct*)pLayoutParam->GetRawData();
 
-	POS_INFO PI;
+	POS_INFO Pi;
 
 	switch (nPosIndex)
 	{
 	case 0:
-		PI = pSouiLayoutParamStruct->posLeft;
+		Pi = pSouiLayoutParamStruct->posLeft;
 		break;
 	case 1:
-		PI = pSouiLayoutParamStruct->posTop;
+		Pi = pSouiLayoutParamStruct->posTop;
 		break;
 	case 2:
-		PI = pSouiLayoutParamStruct->posRight;
+		Pi = pSouiLayoutParamStruct->posRight;
 		break;
 	case 3:
 	default:
-		PI = pSouiLayoutParamStruct->posBottom;
+		Pi = pSouiLayoutParamStruct->posBottom;
 	}
 
 	SStringW strPos;
-	switch (PI.pit)
+	switch (Pi.pit)
 	{
 	case PIT_NULL:
 		strPos = L"";        //无效定义
@@ -1027,11 +1027,11 @@ SStringW SDesignerView::GetPosFromLayout(SouiLayoutParam *pLayoutParam, INT nPos
 	case PIT_SIB_LEFT:      //兄弟结点的left,用于X
 		if (0 == nPosIndex)
 		{
-			strPos = strPos.Format(L"sib.left@%d:", PI.nRefID);
+			strPos = strPos.Format(L"sib.left@%d:", Pi.nRefID);
 		}
 		else
 		{
-			strPos = strPos.Format(L"sib.top@%d:", PI.nRefID);
+			strPos = strPos.Format(L"sib.top@%d:", Pi.nRefID);
 		}
 		break;
 
@@ -1041,11 +1041,11 @@ SStringW SDesignerView::GetPosFromLayout(SouiLayoutParam *pLayoutParam, INT nPos
 	case PIT_SIB_RIGHT:      //兄弟结点的right,用于X 
 		if (2 == nPosIndex)
 		{
-			strPos = strPos.Format(L"sib.right@%d:", PI.nRefID);
+			strPos = strPos.Format(L"sib.right@%d:", Pi.nRefID);
 		}
 		else
 		{
-			strPos = strPos.Format(L"sib.bottom@%d:", PI.nRefID);
+			strPos = strPos.Format(L"sib.bottom@%d:", Pi.nRefID);
 		}
 		break;
 
@@ -1056,13 +1056,13 @@ SStringW SDesignerView::GetPosFromLayout(SouiLayoutParam *pLayoutParam, INT nPos
 		break;
 	}
 
-	if (PI.cMinus == -1)
+	if (Pi.cMinus == -1)
 	{
 		strPos = strPos + L"-";
 	}
 	SStringW strTemp;
-	int n = (int)PI.nPos.fSize;
-	strTemp.Format(L"%d%s", n, UnitToStr(PI.nPos.unit));
+	int n = (int)Pi.nPos.fSize;
+	strTemp.Format(L"%d%s", n, UnitToStr(Pi.nPos.unit));
 	strPos = strPos + strTemp;
 	return strPos;
 }
