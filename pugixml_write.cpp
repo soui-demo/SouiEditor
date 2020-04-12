@@ -1,5 +1,6 @@
 ﻿#include "stdafx.h"
 #include "pugixml_write.h"
+#include <iosfwd>
 
 
 myxml_writer_stream::myxml_writer_stream(SStringA& stream) : narrow_stream(&stream), wide_stream(0)
